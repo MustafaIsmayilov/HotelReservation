@@ -19,9 +19,5 @@ public class CustomerConfiguration:IEntityTypeConfiguration<Customer>
         builder.Property(c=>c.Phone)
                  .IsRequired()
                  .HasMaxLength(100);
-
-        builder.HasMany(c => c.Reservations)
-            .WithOne(r => r.Customer)
-            .HasForeignKey(r => r.CustomerId);
     }
 }

@@ -8,13 +8,20 @@ public class ReservationConfiguration:IEntityTypeConfiguration<Reservation>
 {
     public void Configure(EntityTypeBuilder<Reservation> builder)
     {
-        builder.HasOne(r => r.Room)
-            .WithMany(room => room.Reservations)
-            .HasForeignKey(r => r.RoomId);
-
-        builder.HasOne(r => r.Customer)
-            .WithMany(c => c.Reservations)
-            .HasForeignKey(r => r.CustomerId);
+        builder
+            .HasMany(r => r.Rooms)
+            .WithMany() // Room entity-də navigation collection yoxdur, əgər əlavə etmək istəsən .WithMany(rm => rm.Reservations) yazılacaq
+            .UsingEntity<Dictionary<string, object>>(
+                "ReservationRoom", // join table adı
+                j => j.HasOne<Room>()
+                      .WithMany()
+                      .HasForeignKey("RoomId")
+                      .OnDelete(DeleteBehavior.Cascade),
+                j => j.HasOne<Reservation>()
+                      .WithMany()
+                      .HasForeignKey("ReservationId")
+                      .OnDelete(DeleteBehavior.Cascade)
+            );
 
         builder.Property(r => r.StartDate)
             .IsRequired();

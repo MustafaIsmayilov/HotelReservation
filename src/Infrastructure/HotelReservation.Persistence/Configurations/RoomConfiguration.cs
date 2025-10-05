@@ -19,8 +19,6 @@ public class RoomConfiguration:IEntityTypeConfiguration<Room>
             .IsRequired()
             .HasDefaultValue(true);
 
-        builder.HasMany(r => r.Reservations)
-            .WithOne(res => res.Room)
-            .HasForeignKey(res => res.RoomId);
+        
     }
 }

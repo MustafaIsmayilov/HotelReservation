@@ -1,9 +1,10 @@
-﻿namespace HotelReservation.Domain.Entities;
+﻿namespace HotelReservation.Application.DTOs.CustomerDto;
 
-public class Customer: BaseEntity
+public class CustomerGetDto
 {
+    public Guid Id { get; set; }
     public string FullName { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string Phone { get; set; } = null!;
-    
 }
+

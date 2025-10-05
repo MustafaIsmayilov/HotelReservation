@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelReservation.Persistence.Migrations
 {
     [DbContext(typeof(HotelDbContext))]
-    [Migration("20251003194800_InitialCreate")]
+    [Migration("20251004120053_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace HotelReservation.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.16")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -115,14 +115,8 @@ namespace HotelReservation.Persistence.Migrations
                     b.Property<Guid?>("CreatedUser")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RoomId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -134,10 +128,6 @@ namespace HotelReservation.Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("RoomId");
 
                     b.ToTable("Reservations");
                 });
@@ -178,6 +168,21 @@ namespace HotelReservation.Persistence.Migrations
                     b.ToTable("Rooms");
                 });
 
+            modelBuilder.Entity("ReservationRoom", b =>
+                {
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ReservationId", "RoomId");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("ReservationRoom");
+                });
+
             modelBuilder.Entity("HotelReservation.Domain.Entities.Payment", b =>
                 {
                     b.HasOne("HotelReservation.Domain.Entities.Reservation", "Reservation")
@@ -189,38 +194,24 @@ namespace HotelReservation.Persistence.Migrations
                     b.Navigation("Reservation");
                 });
 
-            modelBuilder.Entity("HotelReservation.Domain.Entities.Reservation", b =>
+            modelBuilder.Entity("ReservationRoom", b =>
                 {
-                    b.HasOne("HotelReservation.Domain.Entities.Customer", "Customer")
-                        .WithMany("Reservations")
-                        .HasForeignKey("CustomerId")
+                    b.HasOne("HotelReservation.Domain.Entities.Reservation", null)
+                        .WithMany()
+                        .HasForeignKey("ReservationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HotelReservation.Domain.Entities.Room", "Room")
-                        .WithMany("Reservations")
+                    b.HasOne("HotelReservation.Domain.Entities.Room", null)
+                        .WithMany()
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Room");
-                });
-
-            modelBuilder.Entity("HotelReservation.Domain.Entities.Customer", b =>
-                {
-                    b.Navigation("Reservations");
                 });
 
             modelBuilder.Entity("HotelReservation.Domain.Entities.Reservation", b =>
                 {
                     b.Navigation("Payments");
-                });
-
-            modelBuilder.Entity("HotelReservation.Domain.Entities.Room", b =>
-                {
-                    b.Navigation("Reservations");
                 });
 #pragma warning restore 612, 618
         }
